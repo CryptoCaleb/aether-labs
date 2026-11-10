@@ -132,19 +132,19 @@ Take ħ → 0 at fixed Γ. Then κ → 0, N = Γ/κ → ∞ and ξ → 0, and th
 | E1 | Feynman rule: coarse-grained lattice velocity = Ωr | < 10% (lattice), < 2% for wide filters | ✅ **PASS**, within 10% |
 | E2 | Cluster of N quanta has the far field of one N-quantum vortex; difference ∝ (a/r)^N | exponents ±0.1 | ✅ dynamics version: 64-vortex clusters orbit like single vortices (1%) |
 | E3 | Bundle-ring speed vs N → hollow ring; residual ∝ (1/N)ln(d/a₀) | slope 1 ± 0.15 | ✅ converges to within 0.7% at N=64; residual law not yet fitted |
-| E4 | Hamiltonian consistency U = ∂E/∂P at each level | < 1% | ⏳ next |
+| E4 | Hamiltonian consistency U = ∂E/∂P at each level | < 1% | ✅ **PASS**: thin ring 0.1%; 16-filament bundle 0.55% *at fixed bundle volume* (12–14% off at fixed radius) |
 | E5 | Bundle of bundles: far field and impulse universality | < 10⁻³ at 20R | ✅ **PASS**, < 10⁻⁴ at 3–8R once impulse is matched |
 | E6 | Energy/impulse/helicity bookkeeping through GPE reconnections | drift < 10⁻³ | ⏳ needs 3D GPE |
 | E7 | ħ → 0: GPE vortex patch → Kirchhoff ellipse Ω = ω₀ab/(a+b)² | error falls with N | ⏳ next |
 | E8 | Kolmogorov −5/3 only from *polarised* tangles | slope −1.67 ± 0.1 | ⏳ |
-| E9 | Long-wavelength sound sees the same metric for a lattice and a smooth flow (Δt = 2Γ/c²) | 1% for kℓ < 0.1 | ⏳ next |
+| E9 | Long-wavelength sound sees the same metric for a lattice and a smooth flow (Δt = 2Γ/c²) | 1% for kℓ < 0.1 | ✅ **PASS** (ray level): 61-vortex cluster = single vortex to 10⁻¹¹; wave-level scattering test still to do |
 
 **Falsification tests:** expected to fail, and informative when they do.
 
 | # | Experiment | What the program needs | Expected |
 |---|---|---|---|
 | E10 | Compute G_μν of the emergent acoustic metric vs the medium's T_μν | one universal G_eff to 10% | FAIL |
-| E11 | Universal 1/r² attraction ∝ E₁E₂; equivalence principle across internal structures | exponent −2 ± 0.05, trajectories differ < 10⁻³ | FAIL |
+| E11 | Universal 1/r² attraction ∝ E₁E₂; equivalence principle across internal structures | exponent −2 ± 0.05, trajectories differ < 10⁻³ | ❌ **FAILS as predicted**: η ≈ 0.095 (noise floor 0.004) |
 | E12 | A massless, 2-polarisation, transverse-traceless (spin-2) mode | exists and couples universally | FAIL (only sound and Tkachenko modes) |
 
 ## 7. Where the idea stands
@@ -185,6 +185,24 @@ Far field:
 Quantum → classical:
 - Two clusters of 64 point vortices orbit at Ω = 1/π (within 1%), the same as two single vortices.
 - In the rotating Gross–Pitaevskii superfluid, the density-weighted coarse-grained velocity of a lattice of quantised vortices fits v = Ωr within 10%.
+
+### Pass 2: gravity tests (E4, E9, E11)
+
+**E4, Hamiltonian consistency.**
+- **Thin ring:** U = 0.32383 vs dE/dP = 0.32414, a 0.1% difference.
+- **16-filament bundle at fixed radius a:** U exceeds dE/dP by 12–14% for N = 4–32. This doesn't change with resolution or core size, so it is real.
+- **Same bundle at fixed volume (a²R constant, Kelvin's constraint for an incompressible thick core):** the residual is 1.97%, 0.55% and 0.25% for a = 0.15, 0.075 and 0.0375. That is the expected (a/R)² behaviour.
+
+*Lesson:* coarse-grained objects keep their Hamiltonian structure, but only with the right constraint on their internal degrees of freedom. "What is held fixed inside" is real physics, not bookkeeping.
+
+**E9, acoustic Sagnac.** Sound guided around a loop of radius L picks up a delay Δt → 2Γ/c², with a measured value of 0.0050000 against a predicted 0.005. A cluster of 61 vortices and a single vortex agree to 10⁻¹¹.
+
+*Caveat:* at the ray level this is guaranteed by Stokes' theorem (∮v·dl = Γ). Microstructure could appear only through wave scattering at kℓ ~ 1, which needs a wave solver (planned).
+
+**E11, equivalence principle (falsification test).**
+- *Setup:* two small vortex bodies with the same impulse fall through the flow of a large "planet" ring. One is a thin ring (R = 0.5). The other is a 6-filament bundle with its radius adjusted to match the impulse.
+- *Result:* after subtracting free motion, their extra displacements are 0.430 and 0.392. That gives **η = 0.094**, and 0.097 at higher resolution. The control, two identical thin rings at different resolutions, gives η = 0.004.
+- *Conclusion:* the violation is 25× the noise floor. **Vortex "matter" does not fall universally; its response depends on internal structure.** Real gravity requires η < 10⁻¹⁵ (MICROSCOPE). This is the falsification predicted in §4, now measured.
 
 ## References (checked by the research agent)
 - Barenghi, Skrbek, Sreenivasan, PNAS 2014: https://arxiv.org/abs/1404.1909

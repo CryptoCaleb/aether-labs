@@ -2,7 +2,7 @@
 //! single-medium theory must reproduce versus what these models achieve.
 
 use crate::experiments::{checks_table, FAIL, PASS};
-use aether_core::{acoustic, bjerknes, filament, gpe, hierarchy, pointvortex, sinegordon, Check};
+use aether_core::{acoustic, bjerknes, filament, gpe, gravity, hierarchy, pointvortex, sinegordon, Check};
 use egui::{Color32, RichText, Ui};
 use std::sync::mpsc::{channel, Receiver};
 use std::time::Instant;
@@ -40,6 +40,7 @@ impl Scorecard {
             ("Bjerknes pulsation forces", "Pulsating bodies in the medium feel 1/d² forces", bjerknes::checks),
             ("Acoustic black hole", "Flowing medium = curved spacetime for its waves", acoustic::checks),
             ("Emergent relativity", "A medium's own solitons show Lorentz contraction & time dilation", sinegordon::checks),
+            ("Gravity from vortices (E4 · E9 · E11)", "Hierarchical vortices keep Hamiltonian structure and a universal acoustic metric. Do they obey the equivalence principle?", gravity::checks),
             ("Vortex of vortices (scale hierarchy)", "A vortex made of ever-smaller vortices becomes one classical vortex; microstructure is invisible at large scale", hierarchy::checks),
         ];
         if self.include_slow {
@@ -126,7 +127,7 @@ fn requirements_table(ui: &mut Ui) {
         ("Charge quantisation", "|q_e + q_p| < 10⁻²¹ e", "Shown (topology)", 1, "Quantised superfluid circulation; conserved linking number."),
         ("Stable particles of fixed mass", "proton > 10³⁴ yr", "FAILS for fluid vortices", 2, "Ring size is set by initial conditions; rings slow as they gain energy; knots untie by reconnection."),
         ("Spin-½ / fermions", "4π rotation symmetry", "Not reproduced", 2, "Needs Skyrmion-type field solitons, not fluid vortices."),
-        ("Equivalence principle", "η < 10⁻¹⁵ (MICROSCOPE)", "FAILS (Bjerknes)", 2, "The force scales with ΔV₁ΔV₂, not with inertial mass."),
+        ("Equivalence principle", "η < 10⁻¹⁵ (MICROSCOPE)", "FAILS (Bjerknes, vortex bodies)", 2, "Bjerknes force ∝ ΔV₁ΔV₂, not mass. Vortex bodies of equal impulse but different structure fall differently: η ≈ 0.095 (noise floor 0.004)."),
         ("E² = p²c² + m²c⁴", "all particles", "Shown for solitons, fails for rings", 1, "Kink energy = 8γ; vortex rings have U falling as E rises."),
         ("No drag on steady motion", "orbits stable for Gyr", "Shown (ideal fluid)", 1, "d'Alembert: an ideal medium gives zero drag; kinks keep their speed."),
         ("Gravity with Einstein dynamics and spin-2 waves", "light bending, GW speed = c", "Partial", 0, "Acoustic metric bends and traps rays, but it is kinematic and not sourced by mass."),

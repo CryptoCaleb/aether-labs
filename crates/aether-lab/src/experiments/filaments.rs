@@ -38,6 +38,8 @@ pub struct FilamentExp {
     z0: Vec<f64>,
     energy0: f64,
     impulse0: DVec3,
+    /// Σ|P_i|: the scale for impulse drift (total P can be ~0, e.g. head-on rings).
+    impulse_scale: f64,
     s_z: Vec<Series>,
     s_r: Vec<Series>,
     s_energy: Series,
@@ -70,6 +72,7 @@ impl FilamentExp {
             z0: Vec::new(),
             energy0: 0.0,
             impulse0: DVec3::ZERO,
+            impulse_scale: 1.0,
             s_z: Vec::new(),
             s_r: Vec::new(),
             s_energy: Series::default(),
@@ -212,6 +215,7 @@ impl Experiment for FilamentExp {
         self.z0 = self.sys.filaments.iter().map(|f| f.centroid().z).collect();
         self.energy0 = self.sys.energy();
         self.impulse0 = self.sys.impulse();
+        self.impulse_scale = self.sys.filaments.iter().map(|f| f.impulse().length()).sum::<f64>().max(1e-12);
         self.last_energy = self.energy0;
         self.s_z = vec![Series::default(); self.sys.filaments.len()];
         self.s_r = vec![Series::default(); self.sys.filaments.len()];
@@ -309,7 +313,7 @@ impl Experiment for FilamentExp {
         metric(ui, "time", fmt(self.sys.time));
         metric(ui, "nodes", self.sys.node_count().to_string());
         let p = self.sys.impulse();
-        metric(ui, "impulse drift |ΔP|/|P|", fmt((p - self.impulse0).length() / self.impulse0.length().max(1e-12)));
+        metric(ui, "impulse drift |ΔP|/Σ|Pᵢ|", fmt((p - self.impulse0).length() / self.impulse_scale));
         metric(ui, "energy drift ΔE/E", fmt((self.last_energy - self.energy0) / self.energy0.abs().max(1e-12)));
         match self.kind {
             Kind::Ring => {
@@ -348,7 +352,7 @@ impl Experiment for FilamentExp {
         let mut v = vec![Check::abs(
             "Impulse conserved (relative drift)",
             0.0,
-            (self.sys.impulse() - self.impulse0).length() / self.impulse0.length().max(1e-12),
+            (self.sys.impulse() - self.impulse0).length() / self.impulse_scale,
             1e-3,
             "Helmholtz: total impulse is invariant",
         )];

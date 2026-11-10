@@ -27,17 +27,21 @@ The app tests one hypothesis: reality is a single continuous medium, and matter 
 - [x] Coarse-grained superfluid lattice velocity = rigid rotation Ωr (Feynman)
 - [x] Research brief: docs/RESEARCH-hierarchy.md (coarse-graining, emergent-gravity programmes, no-go theorems)
 
+## Done (v0.3): gravity tests, pass 2
+- [x] E4 Hamiltonian consistency: thin ring 0.1%; bundles pass at fixed volume and fail at fixed radius
+- [x] E9 acoustic Sagnac universality (ray level)
+- [x] E11 equivalence principle: **fails**, η ≈ 0.095 vs a noise floor of 0.004
+
 ## Next: the unification programme (see docs/RESEARCH-hierarchy.md §6)
 Passing side (emergence):
-- E4 Hamiltonian consistency U = ∂E/∂P across levels
 - E7 ħ → 0: GPE vortex patch → classical Kirchhoff ellipse
-- E9 sound sees the same acoustic metric for a vortex lattice and a smooth flow
+- E9b wave-level test: sound scattering off a vortex lattice vs a smooth flow (kℓ sweep)
 - E3 fit of the (1/N)ln(d/a₀) residual
 
 Falsification side (gravity):
 - E10 does the emergent acoustic metric satisfy G_μν = 8πG T_μν with one universal G?
-- E11 universal 1/r² attraction and the equivalence principle across internal structures
 - E12 search for a massless spin-2 mode in a uniform medium and in a vortex lattice
+- E11b universal attraction: force law between two vortex bodies vs 1/r²
 
 ## Earlier backlog
 1. **Vortex reconnection** (Baggaley Type II) for filaments. Trefoil untying, as in Kleckner & Irvine.
