@@ -1,0 +1,13 @@
+[package]
+name = "aether-lab"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+aether-core = { version = "0.1.0", path = "../aether-core" }
+eframe = "0.37.0"
+egui = "0.37"
+egui_plot = "0.38.0"
+glam = "0.34.3"
+png = "0.17"
+rayon = "1.12.0"
