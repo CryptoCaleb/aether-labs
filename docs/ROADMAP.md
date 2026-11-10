@@ -19,7 +19,39 @@ The app tests one hypothesis: reality is a single continuous medium, and matter 
 - [x] Hypothesis scorecard (all suites, threaded) + 12-point requirements table
 - [x] In-app research library
 
-## Next
+## Done (v0.2): scale hierarchy ("vortex of vortices")
+- [x] Hierarchical bundles: rings made of N filaments, made of M filaments… (rotation-minimising frames, twist)
+- [x] N → ∞ limit converges to Kelvin's hollow ring (0.7% at N=64)
+- [x] Far field blind to microstructure except through impulse (10⁻⁵ when impulse is matched)
+- [x] Point-vortex clusters orbit like single vortices (quantum → classical, 2D)
+- [x] Coarse-grained superfluid lattice velocity = rigid rotation Ωr (Feynman)
+- [x] Research brief: docs/RESEARCH-hierarchy.md (coarse-graining, emergent-gravity programmes, no-go theorems)
+
+## Done (v0.3): gravity tests, pass 2
+- [x] E4 Hamiltonian consistency: thin ring 0.1%; bundles pass at fixed volume and fail at fixed radius
+- [x] E9 acoustic Sagnac universality (ray level)
+- [x] E11 equivalence principle: **fails**, η ≈ 0.095 vs a noise floor of 0.004
+
+## Done (v0.4): gravity tests, pass 3
+- [x] Numerical curvature engine (Christoffel/Ricci), validated: Schwarzschild Ricci-flat to 1.4×10⁻¹⁰
+- [x] E10 fluid-made metrics violate Einstein vacuum equations (|R_μν| ≈ 0.8 of scale)
+- [x] E12 Bogoliubov spectrum measured to 10⁻⁵: a single scalar branch, no spin-2 mode, Lorentz violation at kξ ~ 1
+
+## Done (v0.5): programme complete (see docs/RESEARCH-hierarchy.md §9)
+- [x] E7 point-vortex patch → Kirchhoff ellipse (0.06% at N = 1600)
+- [x] E11b vortex bodies interact as 1/d³ dipoles with orientation-dependent sign, not Newtonian gravity
+
+## Open directions (beyond simple fluids)
+Passing side (emergence):
+- E9b wave-level test: sound scattering off a vortex lattice vs a smooth flow (kℓ sweep)
+- E3 fit of the (1/N)ln(d/a₀) residual
+
+Falsification side (gravity):
+- E12b Tkachenko modes of a vortex lattice (ω ∝ k² expected): still no spin-2?
+- Media with emergent gauge symmetry (to evade Weinberg–Witten), e.g. Faddeev–Skyrme / Hopfion solitons
+- Superfluid dark-matter phenomenology (Berezhiani–Khoury galactic vortex arrays)
+
+## Earlier backlog
 1. **Vortex reconnection** (Baggaley Type II) for filaments. Trefoil untying, as in Kleckner & Irvine.
 2. **Compressible medium (D2Q9 lattice Boltzmann).**
    - Bjerknes with retardation: sign flip at kd ~ π/2.

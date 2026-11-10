@@ -39,7 +39,8 @@ Aether Labs puts all of this in one place and lets you test it.
 | **Forces** | Pulsating spheres (Bjerknes) | Can a "breathing" aether make gravity or electricity? | F ∝ 1/d², exponent −2.000; **sign inverted vs Coulomb** |
 | **Gravity as flow** | Acoustic black hole | Sound in a draining vortex sees a curved spacetime | Horizon r = A/c, ergosurface √(A²+B²)/c |
 | **Relativity** | Emergent relativity (sine-Gordon) | Why Michelson–Morley sees no aether wind | Length contraction, E = 8γ, time dilation by γ |
-| **Quantum aether** | Rotating superfluid (Gross–Pitaevskii) | Quantised vortices in a superfluid vacuum | Feynman rule n = Ω/π, triangular lattice |
+| **Quantum aether** | Rotating superfluid (Gross–Pitaevskii) | Quantised vortices in a superfluid vacuum | Feynman rule n = Ω/π, triangular lattice, coarse-grained v = Ωr |
+| **Scale hierarchy** | Vortex of vortices | A vortex made of ever-smaller vortices "until it becomes nothing": does it become one classical vortex? | N → ∞ bundle → hollow Kelvin ring (0.7%); far field sees only impulse (10⁻⁵) |
 
 Every experiment has:
 - live parameter controls
@@ -67,6 +68,20 @@ One click runs every validation suite on background threads. The results are set
 
 ![Scorecard](docs/images/scorecard.png)
 
+### The "vortex of vortices" unification programme (v0.5)
+
+Can a vortex made of ever-smaller vortices, "until it becomes nothing", unify gravity with quantum mechanics? Thirteen experiments later:
+
+| ✅ The limit is real | ❌ But it isn't gravity |
+|---|---|
+| N sub-vortices → classical hollow ring (0.7% at N=64) | Equivalence principle violated (η ≈ 0.095) |
+| Far field sees only the impulse (10⁻⁵) | Fluid metrics break Einstein's vacuum equations (\|R_μν\| ≈ 0.8) |
+| 1600 tiny vortices → Kirchhoff's classical patch (0.06%) | No spin-2 graviton: one scalar sound branch (Bogoliubov, to 10⁻⁵) |
+| Quantised lattice → rigid rotation (Feynman) | Lorentz symmetry breaks at short scales (ω/ck = 1.61) |
+| Hamiltonian structure survives (0.55%, fixed volume) | Vortex bodies interact as 1/d³ dipoles, sign depends on spin |
+
+The κ → 0 limit lands on classical fluid mechanics, as the Jerrard–Spirn theorem predicts, not on Einstein gravity. The full write-up is in [`docs/RESEARCH-hierarchy.md`](docs/RESEARCH-hierarchy.md) §8–9.
+
 ### Current verdict (v0.1)
 
 | ✅ What a single medium reproduces | ❌ Where it fails |
@@ -82,6 +97,7 @@ One click runs every validation suite on background threads. The results are set
 The app includes the full research behind it, searchable in-app and readable here:
 
 - [`docs/RESEARCH-physics.md`](docs/RESEARCH-physics.md): history and physics of the vortex aether, its modern descendants, the 12-point checklist, a ranked list of experiments, and references.
+- [`docs/RESEARCH-hierarchy.md`](docs/RESEARCH-hierarchy.md): vortices made of vortices, coarse-graining from quantum to classical, emergent-gravity programmes (Sakharov, Jacobson, Verlinde, Volovik) and the no-go theorems, with an experiment programme and results.
 - [`docs/RESEARCH-methods.md`](docs/RESEARCH-methods.md): numerical methods (Biot–Savart filaments, vortons, grid fluids, lattice Boltzmann, Gross–Pitaevskii), validation targets and performance.
 - [`docs/ROADMAP.md`](docs/ROADMAP.md): what's done and what's next.
 
@@ -111,7 +127,7 @@ cargo run --release -p aether-lab
 ### Command line
 
 ```bash
-aether-lab --experiment 8                                   # open a specific experiment (0–10)
+aether-lab --experiment 8                                   # open a specific experiment (0–11)
 aether-lab --page scorecard                                 # open the scorecard and run all suites
 aether-lab --experiment 0 --frames 300 --screenshot ring.png  # render, save a PNG, exit
 ```
@@ -135,7 +151,8 @@ crates/
     bjerknes.rs    Pulsating spheres in an ideal medium
     acoustic.rs    Acoustic metric ray tracing (draining bathtub)
     sinegordon.rs  Sine-Gordon medium: kinks, breathers, emergent Lorentz symmetry
-    gpe.rs         2D rotating Gross–Pitaevskii superfluid (split-step FFT)
+    gpe.rs         2D rotating Gross–Pitaevskii superfluid (split-step FFT), coarse-grained rotation curve
+    hierarchy.rs   Vortex-of-vortices bundles, N → ∞ limit, far-field universality, vortex clusters
   aether-lab/    egui desktop app: experiments, views, scorecard, library
 docs/            Research briefs, roadmap, screenshots
 ```

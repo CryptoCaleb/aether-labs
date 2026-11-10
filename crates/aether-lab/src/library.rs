@@ -2,8 +2,9 @@
 
 use egui::{Color32, RichText, Ui};
 
-const DOCS: [(&str, &str); 3] = [
+const DOCS: [(&str, &str); 4] = [
     ("Physics & history", include_str!("../../../docs/RESEARCH-physics.md")),
+    ("Vortex hierarchy & emergent gravity", include_str!("../../../docs/RESEARCH-hierarchy.md")),
     ("Numerical methods", include_str!("../../../docs/RESEARCH-methods.md")),
     ("Roadmap", include_str!("../../../docs/ROADMAP.md")),
 ];

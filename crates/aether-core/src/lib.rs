@@ -8,8 +8,11 @@
 
 pub mod acoustic;
 pub mod bjerknes;
+pub mod curvature;
 pub mod filament;
 pub mod gpe;
+pub mod gravity;
+pub mod hierarchy;
 pub mod pointvortex;
 pub mod shapes;
 pub mod sinegordon;
