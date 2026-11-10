@@ -19,7 +19,27 @@ The app tests one hypothesis: reality is a single continuous medium, and matter 
 - [x] Hypothesis scorecard (all suites, threaded) + 12-point requirements table
 - [x] In-app research library
 
-## Next
+## Done (v0.2): scale hierarchy ("vortex of vortices")
+- [x] Hierarchical bundles: rings made of N filaments, made of M filaments… (rotation-minimising frames, twist)
+- [x] N → ∞ limit converges to Kelvin's hollow ring (0.7% at N=64)
+- [x] Far field blind to microstructure except through impulse (10⁻⁵ when impulse is matched)
+- [x] Point-vortex clusters orbit like single vortices (quantum → classical, 2D)
+- [x] Coarse-grained superfluid lattice velocity = rigid rotation Ωr (Feynman)
+- [x] Research brief: docs/RESEARCH-hierarchy.md (coarse-graining, emergent-gravity programmes, no-go theorems)
+
+## Next: the unification programme (see docs/RESEARCH-hierarchy.md §6)
+Passing side (emergence):
+- E4 Hamiltonian consistency U = ∂E/∂P across levels
+- E7 ħ → 0: GPE vortex patch → classical Kirchhoff ellipse
+- E9 sound sees the same acoustic metric for a vortex lattice and a smooth flow
+- E3 fit of the (1/N)ln(d/a₀) residual
+
+Falsification side (gravity):
+- E10 does the emergent acoustic metric satisfy G_μν = 8πG T_μν with one universal G?
+- E11 universal 1/r² attraction and the equivalence principle across internal structures
+- E12 search for a massless spin-2 mode in a uniform medium and in a vortex lattice
+
+## Earlier backlog
 1. **Vortex reconnection** (Baggaley Type II) for filaments. Trefoil untying, as in Kleckner & Irvine.
 2. **Compressible medium (D2Q9 lattice Boltzmann).**
    - Bjerknes with retardation: sign flip at kd ~ π/2.

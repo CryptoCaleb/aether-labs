@@ -2,7 +2,7 @@
 //! single-medium theory must reproduce versus what these models achieve.
 
 use crate::experiments::{checks_table, FAIL, PASS};
-use aether_core::{acoustic, bjerknes, filament, gpe, pointvortex, sinegordon, Check};
+use aether_core::{acoustic, bjerknes, filament, gpe, hierarchy, pointvortex, sinegordon, Check};
 use egui::{Color32, RichText, Ui};
 use std::sync::mpsc::{channel, Receiver};
 use std::time::Instant;
@@ -40,6 +40,7 @@ impl Scorecard {
             ("Bjerknes pulsation forces", "Pulsating bodies in the medium feel 1/d² forces", bjerknes::checks),
             ("Acoustic black hole", "Flowing medium = curved spacetime for its waves", acoustic::checks),
             ("Emergent relativity", "A medium's own solitons show Lorentz contraction & time dilation", sinegordon::checks),
+            ("Vortex of vortices (scale hierarchy)", "A vortex made of ever-smaller vortices becomes one classical vortex; microstructure is invisible at large scale", hierarchy::checks),
         ];
         if self.include_slow {
             list.push(("Quantised vortex lattice (slow)", "A superfluid medium quantises circulation (Feynman rule)", lattice_suite));
@@ -116,7 +117,7 @@ impl Scorecard {
 
 fn requirements_table(ui: &mut Ui) {
     // (requirement, observed constraint, status, colour key, note)
-    let rows: [(&str, &str, &str, u8, &str); 12] = [
+    let rows: [(&str, &str, &str, u8, &str); 13] = [
         ("Light-speed isotropy (Michelson–Morley)", "Δc/c < 10⁻¹⁷", "Mechanism shown", 1, "Sine-Gordon: medium-made rulers contract and clocks dilate by γ, which hides the aether wind."),
         ("One limiting speed for all species", "agree to 10⁻¹⁵–10⁻²²", "Not yet tested", 0, "Planned: two-field medium with different sound speeds."),
         ("No dispersion of light up to high energy", "beyond the Planck scale (Fermi-LAT)", "Open problem", 2, "Superfluids have a healing length ξ, so dispersion appears at kξ ~ 1."),
@@ -129,6 +130,7 @@ fn requirements_table(ui: &mut Ui) {
         ("E² = p²c² + m²c⁴", "all particles", "Shown for solitons, fails for rings", 1, "Kink energy = 8γ; vortex rings have U falling as E rises."),
         ("No drag on steady motion", "orbits stable for Gyr", "Shown (ideal fluid)", 1, "d'Alembert: an ideal medium gives zero drag; kinks keep their speed."),
         ("Gravity with Einstein dynamics and spin-2 waves", "light bending, GW speed = c", "Partial", 0, "Acoustic metric bends and traps rays, but it is kinematic and not sourced by mass."),
+        ("Quantum → classical across scales", "classical fluids/orbits from quantum constituents", "Shown (coarse-graining)", 1, "Vortex-of-vortices → hollow Kelvin ring; quantised lattice → v = Ωr; far field sees only Γ and impulse."),
     ];
     egui::Grid::new("req").striped(true).num_columns(4).show(ui, |ui| {
         ui.strong("Requirement");

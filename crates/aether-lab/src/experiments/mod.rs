@@ -4,6 +4,7 @@
 pub mod acoustic;
 pub mod bjerknes;
 pub mod filaments;
+pub mod hierarchy;
 pub mod point;
 pub mod relativity;
 pub mod superfluid;
@@ -49,6 +50,7 @@ pub fn all() -> Vec<Box<dyn Experiment>> {
         Box::new(acoustic::AcousticExp::new()),
         Box::new(relativity::RelativityExp::new()),
         Box::new(superfluid::SuperfluidExp::new()),
+        Box::new(hierarchy::HierarchyExp::new()),
     ]
 }
 

@@ -124,6 +124,10 @@ pub struct VortexSystem {
     pub background: DVec3,
     pub time: f64,
     pub resample: bool,
+    /// Per-step Laplacian smoothing weight (0 = off). Damps grid-scale
+    /// sawtooth modes like a small numerical viscosity; it does not change the
+    /// impulse of a closed curve to first order.
+    pub smoothing: f64,
 }
 
 impl VortexSystem {
@@ -135,6 +139,7 @@ impl VortexSystem {
             background: DVec3::ZERO,
             time: 0.0,
             resample: true,
+            smoothing: 0.0,
         }
     }
 
@@ -218,6 +223,16 @@ impl VortexSystem {
             off += f.n();
         }
         self.time += dt;
+        if self.smoothing > 0.0 {
+            let w = self.smoothing;
+            for f in &mut self.filaments {
+                let n = f.pts.len();
+                let old = f.pts.clone();
+                for i in 0..n {
+                    f.pts[i] = old[i] + w * (old[(i + n - 1) % n] + old[(i + 1) % n] - 2.0 * old[i]);
+                }
+            }
+        }
         if self.resample {
             self.resample_all();
         }

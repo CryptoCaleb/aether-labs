@@ -10,6 +10,7 @@ pub mod acoustic;
 pub mod bjerknes;
 pub mod filament;
 pub mod gpe;
+pub mod hierarchy;
 pub mod pointvortex;
 pub mod shapes;
 pub mod sinegordon;

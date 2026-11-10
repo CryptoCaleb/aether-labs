@@ -244,6 +244,50 @@ impl Gpe {
     }
 }
 
+/// Coarse-grained azimuthal superfluid velocity v_θ(r) = ⟨(ħ/m)∇θ · θ̂⟩ in
+/// annuli. Computed from j = Im(ψ*∇ψ) / |ψ|² (density-weighted average), which
+/// is smooth even though the phase winds around every vortex.
+pub fn rotation_curve(gpe: &Gpe, bins: usize, r_max: f64) -> Vec<(f64, f64)> {
+    let n = gpe.n;
+    let dx = gpe.dx();
+    let mut num = vec![0.0; bins];
+    let mut den = vec![0.0; bins];
+    for j in 1..n - 1 {
+        for i in 1..n - 1 {
+            let (x, y) = (gpe.coord(i), gpe.coord(j));
+            let r = (x * x + y * y).sqrt();
+            if r >= r_max || r < 1e-9 {
+                continue;
+            }
+            let p = gpe.psi[j * n + i];
+            let dpx = (gpe.psi[j * n + i + 1] - gpe.psi[j * n + i - 1]) / (2.0 * dx);
+            let dpy = (gpe.psi[(j + 1) * n + i] - gpe.psi[(j - 1) * n + i]) / (2.0 * dx);
+            // Current density j = Im(ψ* ∇ψ)
+            let jx = (p.conj() * dpx).im;
+            let jy = (p.conj() * dpy).im;
+            let jt = (-y * jx + x * jy) / r;
+            let b = ((r / r_max) * bins as f64) as usize;
+            num[b] += jt;
+            den[b] += p.norm_sqr();
+        }
+    }
+    (0..bins)
+        .filter(|&b| den[b] > 0.0)
+        .map(|b| ((b as f64 + 0.5) * r_max / bins as f64, num[b] / den[b]))
+        .collect()
+}
+
+/// Fit v_θ = Ω_eff · r over the inner region; returns Ω_eff.
+pub fn coarse_omega(gpe: &Gpe) -> f64 {
+    let rc = rotation_curve(gpe, 12, 0.6 * gpe.tf_radius());
+    let (mut sxy, mut sxx) = (0.0, 0.0);
+    for (r, v) in rc.iter().skip(2) {
+        sxy += r * v;
+        sxx += r * r;
+    }
+    sxy / sxx
+}
+
 /// Mean nearest-neighbour distance among points.
 pub fn mean_nn_distance(pts: &[(f64, f64)]) -> f64 {
     if pts.len() < 2 {
@@ -272,6 +316,8 @@ pub struct LatticeReport {
     pub nn_distance: f64,
     pub triangular_nn: f64,
     pub all_unit_winding: bool,
+    pub coarse_omega: f64,
+    pub omega: f64,
 }
 
 pub fn analyze_lattice(gpe: &Gpe) -> LatticeReport {
@@ -295,6 +341,8 @@ pub fn analyze_lattice(gpe: &Gpe) -> LatticeReport {
         // Triangular lattice with density n: a = sqrt(2 / (√3 n)).
         triangular_nn: (2.0 / (3f64.sqrt() * feynman)).sqrt(),
         all_unit_winding: vs.iter().all(|v| v.2 == 1),
+        coarse_omega: coarse_omega(gpe),
+        omega: gpe.omega,
     }
 }
 
@@ -315,6 +363,13 @@ pub fn lattice_checks(rep: &LatticeReport) -> Vec<Check> {
             "Abrikosov lattice; Abo-Shaeer et al. 2001",
         ),
         Check::boolean("Every vortex carries exactly one quantum (+1)", rep.all_unit_winding, "Onsager–Feynman quantisation"),
+        Check::rel(
+            "Coarse-grained quantum flow = classical rigid rotation (v = Ωr)",
+            rep.omega,
+            rep.coarse_omega,
+            0.1,
+            "Feynman 1955: many quantised vortices mimic solid-body rotation",
+        ),
     ]
 }
 
