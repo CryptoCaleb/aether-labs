@@ -32,6 +32,11 @@ The app tests one hypothesis: reality is a single continuous medium, and matter 
 - [x] E9 acoustic Sagnac universality (ray level)
 - [x] E11 equivalence principle: **fails**, η ≈ 0.095 vs a noise floor of 0.004
 
+## Done (v0.4): gravity tests, pass 3
+- [x] Numerical curvature engine (Christoffel/Ricci), validated: Schwarzschild Ricci-flat to 1.4×10⁻¹⁰
+- [x] E10 fluid-made metrics violate Einstein vacuum equations (|R_μν| ≈ 0.8 of scale)
+- [x] E12 Bogoliubov spectrum measured to 10⁻⁵: a single scalar branch, no spin-2 mode, Lorentz violation at kξ ~ 1
+
 ## Next: the unification programme (see docs/RESEARCH-hierarchy.md §6)
 Passing side (emergence):
 - E7 ħ → 0: GPE vortex patch → classical Kirchhoff ellipse
@@ -39,8 +44,7 @@ Passing side (emergence):
 - E3 fit of the (1/N)ln(d/a₀) residual
 
 Falsification side (gravity):
-- E10 does the emergent acoustic metric satisfy G_μν = 8πG T_μν with one universal G?
-- E12 search for a massless spin-2 mode in a uniform medium and in a vortex lattice
+- E12b Tkachenko modes of a vortex lattice (ω ∝ k² expected): still no spin-2?
 - E11b universal attraction: force law between two vortex bodies vs 1/r²
 
 ## Earlier backlog

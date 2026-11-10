@@ -143,9 +143,9 @@ Take ħ → 0 at fixed Γ. Then κ → 0, N = Γ/κ → ∞ and ξ → 0, and th
 
 | # | Experiment | What the program needs | Expected |
 |---|---|---|---|
-| E10 | Compute G_μν of the emergent acoustic metric vs the medium's T_μν | one universal G_eff to 10% | FAIL |
+| E10 | Compute G_μν of the emergent acoustic metric vs the medium's T_μν | one universal G_eff to 10% | ❌ **FAILS as predicted**: fluid metrics have \|R_μν\| ≈ 0.80 of the curvature scale in empty space (true Schwarzschild: 1.4×10⁻¹⁰) |
 | E11 | Universal 1/r² attraction ∝ E₁E₂; equivalence principle across internal structures | exponent −2 ± 0.05, trajectories differ < 10⁻³ | ❌ **FAILS as predicted**: η ≈ 0.095 (noise floor 0.004) |
-| E12 | A massless, 2-polarisation, transverse-traceless (spin-2) mode | exists and couples universally | FAIL (only sound and Tkachenko modes) |
+| E12 | A massless, 2-polarisation, transverse-traceless (spin-2) mode | exists and couples universally | ❌ **FAILS as predicted**: one scalar Bogoliubov branch (matched to 10⁻⁵); ω/ck = 1.61 at kξ = 1.8 |
 
 ## 7. Where the idea stands
 - **Legitimate:**
@@ -203,6 +203,45 @@ Quantum → classical:
 - *Setup:* two small vortex bodies with the same impulse fall through the flow of a large "planet" ring. One is a thin ring (R = 0.5). The other is a 6-filament bundle with its radius adjusted to match the impulse.
 - *Result:* after subtracting free motion, their extra displacements are 0.430 and 0.392. That gives **η = 0.094**, and 0.097 at higher resolution. The control, two identical thin rings at different resolutions, gives η = 0.004.
 - *Conclusion:* the violation is 25× the noise floor. **Vortex "matter" does not fall universally; its response depends on internal structure.** Real gravity requires η < 10⁻¹⁵ (MICROSCOPE). This is the falsification predicted in §4, now measured.
+
+### Pass 3: Einstein's equations and the graviton (E10, E12)
+
+**E10, does the emergent geometry obey Einstein's equations?**
+
+A numerical curvature engine (4th-order finite differences for the Christoffel symbols and the Ricci tensor) was validated two ways:
+- the Schwarzschild black hole in Painlevé–Gullstrand "river" form, ds² = −dt² + (dx − v dt)² with v = −√(2M/r), has |R_μν| / (curvature scale) = **1.4×10⁻¹⁰**, i.e. Ricci-flat;
+- flat space gives 0.
+
+Two metrics that a real fluid can make were then tested at r = 6M:
+
+| Fluid | Why it differs from GR | \|R_μν\| / scale |
+|---|---|---|
+| Constant-density sink | Continuity forces v ∝ 1/r², not √(2M/r), so the pull is ∝ 1/r⁵ | **0.80** |
+| Schwarzschild velocity profile | Continuity then forces ρ ∝ r^(−3/2), and the acoustic conformal factor ρ/c spoils it (Visser) | **0.80** |
+
+The "space as a flowing river" picture of a black hole is exactly GR. But **no fluid obeying mass conservation can flow that way and still give a vacuum Einstein metric**. The emergent geometry has curvature where Einstein's equations say there must be none.
+
+**E12, is there a graviton?**
+
+The spectrum of a uniform 2D superfluid was measured by seeding standing waves and timing their oscillation:
+- The result matches Bogoliubov's ω² = c²k² + (k²/2)² **to 10⁻⁵** for kξ = 0.22–1.78.
+- Density seeds and phase seeds give the **same** frequencies, so there is a single scalar (helicity-0) branch. That is sound, not a spin-2 wave.
+- At short wavelength the dispersion breaks Lorentz invariance: ω/ck = 1.01, 1.05, 1.11, 1.18, 1.37, **1.61**. Astrophysical bounds require any such effect to sit beyond the Planck scale.
+
+This is the Weinberg–Witten problem made concrete.
+
+### Scorecard after pass 3
+The emergence side works. The gravity side fails, in exactly the places the literature predicted:
+
+| Works (measured) | Fails (measured) |
+|---|---|
+| Vortex-of-vortices → classical ring (0.7%) | Equivalence principle (η ≈ 0.095) |
+| Far field sees only impulse (10⁻⁵) | Einstein vacuum equations (\|R\| ≈ 0.8) |
+| Quantised lattice → rigid rotation (Feynman) | Spin-2 graviton (none; only sound) |
+| Hamiltonian structure across levels (0.55%) | Lorentz invariance at short scales (ω/ck = 1.61) |
+| Acoustic metric universal at long wavelength | Force sign (Bjerknes: like attracts like) |
+
+**Conclusion so far.** A vortex made of ever-smaller vortices really does "become nothing" and leave classical fluid physics behind; that half of the idea is right and is now demonstrated. But classical fluid physics is not Einstein gravity. To get gravity, the medium would need extra structure no simple fluid has: a universal coupling, a conserved covariant stress tensor and a spin-2 mode. That is where the problem stays open.
 
 ## References (checked by the research agent)
 - Barenghi, Skrbek, Sreenivasan, PNAS 2014: https://arxiv.org/abs/1404.1909

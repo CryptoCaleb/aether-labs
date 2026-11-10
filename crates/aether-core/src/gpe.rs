@@ -30,6 +30,8 @@ pub struct Gpe {
     pub time: f64,
     /// Optional extra potential (e.g. a stirring obstacle), indexed like psi.
     pub extra_potential: Vec<f64>,
+    /// Harmonic trap strength (1 = ½r², 0 = uniform periodic box).
+    pub trap: f64,
     fwd: Arc<dyn Fft<f64>>,
     inv: Arc<dyn Fft<f64>>,
     scratch: Vec<C64>,
@@ -50,6 +52,7 @@ impl Gpe {
             psi: vec![C64::new(0.0, 0.0); n * n],
             time: 0.0,
             extra_potential: vec![0.0; n * n],
+            trap: 1.0,
             fwd,
             inv,
             scratch,
@@ -127,7 +130,7 @@ impl Gpe {
             for i in 0..n {
                 let x = self.coord(i);
                 let idx = j * n + i;
-                let v = 0.5 * (x * x + y * y) + self.g * self.psi[idx].norm_sqr() + self.extra_potential[idx];
+                let v = 0.5 * self.trap * (x * x + y * y) + self.g * self.psi[idx].norm_sqr() + self.extra_potential[idx];
                 self.psi[idx] *= (h * v).exp();
             }
         }
@@ -288,6 +291,126 @@ pub fn coarse_omega(gpe: &Gpe) -> f64 {
     sxy / sxx
 }
 
+/// E12: measure the excitation spectrum of a uniform condensate.
+///
+/// Seeds a standing wave of wavenumber k = 2πm/L, either in the density
+/// (`phase = false`) or in the phase (`phase = true`), evolves in real time,
+/// and returns the measured angular frequency from the oscillation of the
+/// density Fourier mode. Bogoliubov theory: ω² = c²k² + (k²/2)², c = √(g n₀).
+pub fn measure_mode(n: usize, len: f64, g: f64, m: usize, phase: bool) -> f64 {
+    let mut gp = Gpe::new(n, len, g, 0.0, 1);
+    gp.trap = 0.0;
+    let n0 = 1.0 / (len * len);
+    let k = TAU_K * m as f64 / len;
+    let eps = 1e-3;
+    for j in 0..n {
+        for i in 0..n {
+            let x = gp.coord(i);
+            let amp = n0.sqrt() * if phase { 1.0 } else { 1.0 + eps * (k * x).cos() };
+            let ph = if phase { eps * (k * x).cos() } else { 0.0 };
+            gp.psi[j * n + i] = C64::from_polar(amp, ph);
+        }
+    }
+    let c = (g * n0).sqrt();
+    let w_est = (c * c * k * k + 0.25 * k.powi(4)).sqrt();
+    let dt = (0.02 / w_est).min(0.01);
+    let mode = |gp: &Gpe| -> f64 {
+        let mut s = 0.0;
+        for j in 0..n {
+            for i in 0..n {
+                s += (gp.psi[j * n + i].norm_sqr() - n0) * (k * gp.coord(i)).cos();
+            }
+        }
+        s
+    };
+    // Track sign changes of the density mode (or of its derivative for a
+    // phase seed, which starts at a zero of density) over ~4 periods.
+    let t_end = 4.2 * TAU_K / w_est;
+    let mut last = mode(&gp);
+    let mut prev_t = 0.0;
+    let mut crossings = Vec::new();
+    while gp.time < t_end {
+        gp.step(dt, false);
+        let v = mode(&gp);
+        if (v > 0.0) != (last > 0.0) && gp.time > dt * 1.5 {
+            let frac = last / (last - v);
+            crossings.push(prev_t + frac * dt);
+        }
+        last = v;
+        prev_t = gp.time;
+    }
+    if crossings.len() < 3 {
+        return f64::NAN;
+    }
+    // Successive zero crossings are half a period apart.
+    let half = (crossings[crossings.len() - 1] - crossings[0]) / (crossings.len() - 1) as f64;
+    std::f64::consts::PI / half
+}
+
+const TAU_K: f64 = std::f64::consts::TAU;
+
+pub struct SpectrumStudy {
+    pub ks: Vec<f64>,
+    pub xi: f64,
+    pub c: f64,
+    pub measured: Vec<f64>,
+    pub bogoliubov: Vec<f64>,
+    pub phase_seeded: Vec<f64>,
+}
+
+pub fn spectrum_study() -> SpectrumStudy {
+    let (n, len, g): (usize, f64, f64) = (64, 20.0, 400.0);
+    let n0 = 1.0 / (len * len);
+    let c = (g * n0).sqrt();
+    let xi = 1.0 / (2.0 * g * n0).sqrt();
+    let ms = [1usize, 2, 3, 4, 6, 8];
+    let ks: Vec<f64> = ms.iter().map(|&m| TAU_K * m as f64 / len).collect();
+    let measured = ms.iter().map(|&m| measure_mode(n, len, g, m, false)).collect();
+    let phase_seeded = ms.iter().map(|&m| measure_mode(n, len, g, m, true)).collect();
+    let bogoliubov = ks.iter().map(|k| (c * c * k * k + 0.25 * k.powi(4)).sqrt()).collect();
+    SpectrumStudy { ks, xi, c, measured, bogoliubov, phase_seeded }
+}
+
+pub fn spectrum_checks(s: &SpectrumStudy) -> Vec<Check> {
+    let worst = s
+        .measured
+        .iter()
+        .zip(&s.bogoliubov)
+        .map(|(m, b)| ((m - b) / b).abs())
+        .fold(0.0, f64::max);
+    let same_branch = s
+        .measured
+        .iter()
+        .zip(&s.phase_seeded)
+        .map(|(a, b)| ((a - b) / a).abs())
+        .fold(0.0, f64::max);
+    let last = s.ks.len() - 1;
+    let lorentz = s.measured[last] / (s.c * s.ks[last]);
+    vec![
+        Check::abs("E12 Measured spectrum = Bogoliubov ω² = c²k² + k⁴/4 (max rel. err)", 0.0, worst, 0.02, "Bogoliubov 1947"),
+        Check::rel("E12 Long-wavelength sound speed c = √(g n₀)", s.c, s.measured[0] / s.ks[0], 0.03, "phonons of the superfluid medium"),
+        Check::abs(
+            "E12 Density and phase seeds excite ONE branch (scalar mode only)",
+            0.0,
+            same_branch,
+            0.02,
+            "a scalar order parameter has a single propagating mode",
+        ),
+        Check::rel(
+            "E12 Lorentz-invariant up to kξ ≈ 1.8 (ω = ck)",
+            1.0,
+            lorentz,
+            0.01,
+            "EXPECTED TO FAIL: the medium's healing length breaks Lorentz symmetry (Planck-scale bounds)",
+        ),
+        Check::boolean(
+            "E12 Medium carries a massless spin-2 (graviton-like) mode",
+            false,
+            "EXPECTED TO FAIL: only a helicity-0 sound branch propagates; Weinberg–Witten",
+        ),
+    ]
+}
+
 /// Mean nearest-neighbour distance among points.
 pub fn mean_nn_distance(pts: &[(f64, f64)]) -> f64 {
     if pts.len() < 2 {
@@ -410,6 +533,24 @@ mod tests {
         let rep = analyze_lattice(&g);
         for c in lattice_checks(&rep) {
             assert!(c.pass(), "{c:?} total={} inner={}", rep.total, rep.inner_count);
+        }
+    }
+}
+
+#[cfg(test)]
+mod spectrum_tests {
+    use super::*;
+
+    #[test]
+    fn bogoliubov_spectrum() {
+        let s = spectrum_study();
+        eprintln!("c {} xi {}", s.c, s.xi);
+        for i in 0..s.ks.len() {
+            eprintln!("k {:.3} kxi {:.2} meas {:.5} phase {:.5} bog {:.5} w/ck {:.4}", s.ks[i], s.ks[i] * s.xi, s.measured[i], s.phase_seeded[i], s.bogoliubov[i], s.measured[i] / (s.c * s.ks[i]));
+        }
+        for c in spectrum_checks(&s) {
+            let expect_fail = c.source.starts_with("EXPECTED TO FAIL");
+            assert_eq!(c.pass(), !expect_fail, "{c:?}");
         }
     }
 }

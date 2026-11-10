@@ -8,6 +8,7 @@
 
 pub mod acoustic;
 pub mod bjerknes;
+pub mod curvature;
 pub mod filament;
 pub mod gpe;
 pub mod gravity;

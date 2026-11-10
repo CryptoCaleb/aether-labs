@@ -2,7 +2,7 @@
 //! single-medium theory must reproduce versus what these models achieve.
 
 use crate::experiments::{checks_table, FAIL, PASS};
-use aether_core::{acoustic, bjerknes, filament, gpe, gravity, hierarchy, pointvortex, sinegordon, Check};
+use aether_core::{acoustic, bjerknes, curvature, filament, gpe, gravity, hierarchy, pointvortex, sinegordon, Check};
 use egui::{Color32, RichText, Ui};
 use std::sync::mpsc::{channel, Receiver};
 use std::time::Instant;
@@ -41,6 +41,7 @@ impl Scorecard {
             ("Acoustic black hole", "Flowing medium = curved spacetime for its waves", acoustic::checks),
             ("Emergent relativity", "A medium's own solitons show Lorentz contraction & time dilation", sinegordon::checks),
             ("Gravity from vortices (E4 · E9 · E11)", "Hierarchical vortices keep Hamiltonian structure and a universal acoustic metric. Do they obey the equivalence principle?", gravity::checks),
+            ("Einstein & graviton tests (E10 · E12)", "Does the medium's emergent geometry obey Einstein's equations, and can it carry a spin-2 graviton?", curvature::gravity_dynamics_checks),
             ("Vortex of vortices (scale hierarchy)", "A vortex made of ever-smaller vortices becomes one classical vortex; microstructure is invisible at large scale", hierarchy::checks),
         ];
         if self.include_slow {
@@ -121,7 +122,7 @@ fn requirements_table(ui: &mut Ui) {
     let rows: [(&str, &str, &str, u8, &str); 13] = [
         ("Light-speed isotropy (Michelson–Morley)", "Δc/c < 10⁻¹⁷", "Mechanism shown", 1, "Sine-Gordon: medium-made rulers contract and clocks dilate by γ, which hides the aether wind."),
         ("One limiting speed for all species", "agree to 10⁻¹⁵–10⁻²²", "Not yet tested", 0, "Planned: two-field medium with different sound speeds."),
-        ("No dispersion of light up to high energy", "beyond the Planck scale (Fermi-LAT)", "Open problem", 2, "Superfluids have a healing length ξ, so dispersion appears at kξ ~ 1."),
+        ("No dispersion of light up to high energy", "beyond the Planck scale (Fermi-LAT)", "FAILS (measured)", 2, "Superfluid phonons follow Bogoliubov ω² = c²k² + k⁴/4 (measured to 10⁻⁵): ω/ck = 1.61 at kξ = 1.8."),
         ("Inverse-square laws", "Coulomb exponent to 10⁻¹⁶", "Shown", 1, "Bjerknes force exponent −2 within 2%."),
         ("Correct force signs (like charges repel, masses attract)", "observed", "FAILS", 2, "Bjerknes: like phases attract. One mechanism cannot give both signs."),
         ("Charge quantisation", "|q_e + q_p| < 10⁻²¹ e", "Shown (topology)", 1, "Quantised superfluid circulation; conserved linking number."),
@@ -130,7 +131,7 @@ fn requirements_table(ui: &mut Ui) {
         ("Equivalence principle", "η < 10⁻¹⁵ (MICROSCOPE)", "FAILS (Bjerknes, vortex bodies)", 2, "Bjerknes force ∝ ΔV₁ΔV₂, not mass. Vortex bodies of equal impulse but different structure fall differently: η ≈ 0.095 (noise floor 0.004)."),
         ("E² = p²c² + m²c⁴", "all particles", "Shown for solitons, fails for rings", 1, "Kink energy = 8γ; vortex rings have U falling as E rises."),
         ("No drag on steady motion", "orbits stable for Gyr", "Shown (ideal fluid)", 1, "d'Alembert: an ideal medium gives zero drag; kinks keep their speed."),
-        ("Gravity with Einstein dynamics and spin-2 waves", "light bending, GW speed = c", "Partial", 0, "Acoustic metric bends and traps rays, but it is kinematic and not sourced by mass."),
+        ("Gravity with Einstein dynamics and spin-2 waves", "light bending, GW speed = c", "FAILS (measured)", 2, "Fluid-made metrics are not Ricci-flat in vacuum (|R_μν| ≈ 0.8 of curvature scale, vs 10⁻¹⁰ for true Schwarzschild); only a spin-0 sound mode propagates."),
         ("Quantum → classical across scales", "classical fluids/orbits from quantum constituents", "Shown (coarse-graining)", 1, "Vortex-of-vortices → hollow Kelvin ring; quantised lattice → v = Ωr; far field sees only Γ and impulse."),
     ];
     egui::Grid::new("req").striped(true).num_columns(4).show(ui, |ui| {
