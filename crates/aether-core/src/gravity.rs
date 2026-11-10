@@ -287,3 +287,144 @@ mod tests {
         }
     }
 }
+
+// ---------------------------------------------------------------- E7
+
+/// E7: a Kirchhoff elliptical vortex patch (semi-axes a, b, vorticity ω₀) built
+/// from `n` equal point vortices. As n → ∞ each carries Γ/n → 0, which is the
+/// κ → 0 limit of a superfluid. Returns the measured rotation rate of the
+/// ellipse (from its second moments). Classical prediction (Kirchhoff 1876):
+/// Ω = ω₀ ab/(a+b)².
+pub fn kirchhoff_omega(n: usize, a: f64, b: f64) -> f64 {
+    use crate::pointvortex::PointVortices;
+    let w0 = 1.0;
+    let gamma = w0 * PI * a * b;
+    let golden = PI * (3.0 - 5f64.sqrt());
+    let pos: Vec<DVec2> = (0..n)
+        .map(|k| {
+            let rr = ((k as f64 + 0.5) / n as f64).sqrt();
+            let th = k as f64 * golden;
+            DVec2::new(a * rr * th.cos(), b * rr * th.sin())
+        })
+        .collect();
+    let mut pv = PointVortices::new(pos, vec![gamma / n as f64; n]);
+    // Smooth over about the inter-vortex spacing (vortex-blob regularisation).
+    pv.core = 0.5 * (PI * a * b / n as f64).sqrt();
+    let angle = |pv: &PointVortices| -> f64 {
+        let (mut ixx, mut iyy, mut ixy) = (0.0, 0.0, 0.0);
+        for p in &pv.pos {
+            ixx += p.x * p.x;
+            iyy += p.y * p.y;
+            ixy += p.x * p.y;
+        }
+        0.5 * (2.0 * ixy).atan2(ixx - iyy)
+    };
+    let omega_pred = w0 * a * b / ((a + b) * (a + b));
+    let t_end = 0.6 / omega_pred; // ~1/10 of a turn... about 0.6 rad
+    let dt = t_end / 200.0;
+    let a0 = angle(&pv);
+    while pv.time < t_end - 1e-12 {
+        pv.step(dt);
+    }
+    (angle(&pv) - a0) / pv.time
+}
+
+pub struct KirchhoffStudy {
+    pub ns: Vec<usize>,
+    pub omegas: Vec<f64>,
+    pub predicted: f64,
+}
+
+pub fn kirchhoff_study() -> KirchhoffStudy {
+    let (a, b) = (1.0, 0.5);
+    let ns = vec![25, 100, 400, 1600];
+    let omegas = ns.iter().map(|&n| kirchhoff_omega(n, a, b)).collect();
+    KirchhoffStudy { ns, omegas, predicted: a * b / ((a + b) * (a + b)) }
+}
+
+// ---------------------------------------------------------------- E11b
+
+/// Interaction energy of two coaxial rings (R = 1, Γ = 1) separated by d.
+/// `flip` reverses the second ring's circulation.
+pub fn ring_interaction(d: f64, flip: bool) -> f64 {
+    let (core, nodes) = (0.1, 160);
+    let spacing = TAU / nodes as f64;
+    let a = shapes::ring(DVec3::ZERO, DVec3::Z, 1.0, nodes, 1.0, [0; 3]);
+    let b = shapes::ring(DVec3::new(0.0, 0.0, d), DVec3::Z, 1.0, nodes, if flip { -1.0 } else { 1.0 }, [0; 3]);
+    let e_ab = VortexSystem::new(vec![a.clone(), b.clone()], core, spacing).energy();
+    let e_a = VortexSystem::new(vec![a], core, spacing).energy();
+    let e_b = VortexSystem::new(vec![b], core, spacing).energy();
+    e_ab - e_a - e_b
+}
+
+pub struct ForceLawStudy {
+    pub ds: Vec<f64>,
+    pub energies: Vec<f64>,
+    pub flipped: Vec<f64>,
+    pub exponent: f64,
+}
+
+pub fn force_law_study() -> ForceLawStudy {
+    let ds = vec![4.0, 6.0, 8.0, 12.0, 16.0, 24.0];
+    let energies: Vec<f64> = ds.iter().map(|&d| ring_interaction(d, false)).collect();
+    let flipped = ds.iter().map(|&d| ring_interaction(d, true)).collect();
+    let exponent = crate::stats::power_law_fit(&ds, &energies).1;
+    ForceLawStudy { ds, energies, flipped, exponent }
+}
+
+pub fn final_checks() -> Vec<Check> {
+    let k = kirchhoff_study();
+    let errs: Vec<f64> = k.omegas.iter().map(|w| ((w - k.predicted) / k.predicted).abs()).collect();
+    let f = force_law_study();
+    let sign_flips = f.energies.iter().zip(&f.flipped).all(|(a, b)| a * b < 0.0);
+    vec![
+        Check::rel(
+            "E7 1600 tiny vortices rotate like Kirchhoff's classical patch",
+            k.predicted,
+            *k.omegas.last().unwrap(),
+            0.02,
+            "Kirchhoff 1876; κ → 0 limit (Jerrard–Spirn)",
+        ),
+        Check::boolean(
+            "E7 Error shrinks as vortices get smaller (N = 25 → 1600)",
+            errs.last().unwrap() < &(errs[0] * 0.5),
+            "quantum → classical convergence",
+        ),
+        Check::abs(
+            "E11b Vortex bodies interact as dipoles: energy ∝ 1/d³",
+            -3.0,
+            f.exponent,
+            0.1,
+            "multipole expansion: the far field of a ring is an impulse dipole",
+        ),
+        Check::abs(
+            "E11b …a Newtonian 1/d potential?",
+            -1.0,
+            f.exponent,
+            0.1,
+            "EXPECTED TO FAIL: gravity needs U ∝ −m₁m₂/r; vortex bodies give 1/r³",
+        ),
+        Check::boolean(
+            "E11b Interaction is universally attractive (sign independent of orientation)",
+            !sign_flips,
+            "EXPECTED TO FAIL: reversing one ring's spin flips the interaction sign",
+        ),
+    ]
+}
+
+#[cfg(test)]
+mod final_tests {
+    use super::*;
+
+    #[test]
+    fn final_suite() {
+        let k = kirchhoff_study();
+        eprintln!("E7 predicted {} measured {:?}", k.predicted, k.omegas);
+        let f = force_law_study();
+        eprintln!("E11b d {:?} E {:?} flipped {:?} exp {}", f.ds, f.energies, f.flipped, f.exponent);
+        for c in final_checks() {
+            eprintln!("{} {} exp {} meas {}", if c.pass() { "PASS" } else { "FAIL" }, c.name, c.expected, c.measured);
+            assert_eq!(c.pass(), !c.source.starts_with("EXPECTED TO FAIL"), "{c:?}");
+        }
+    }
+}

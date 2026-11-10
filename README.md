@@ -68,6 +68,20 @@ One click runs every validation suite on background threads. The results are set
 
 ![Scorecard](docs/images/scorecard.png)
 
+### The "vortex of vortices" unification programme (v0.5)
+
+Can a vortex made of ever-smaller vortices, "until it becomes nothing", unify gravity with quantum mechanics? Thirteen experiments later:
+
+| ✅ The limit is real | ❌ But it isn't gravity |
+|---|---|
+| N sub-vortices → classical hollow ring (0.7% at N=64) | Equivalence principle violated (η ≈ 0.095) |
+| Far field sees only the impulse (10⁻⁵) | Fluid metrics break Einstein's vacuum equations (\|R_μν\| ≈ 0.8) |
+| 1600 tiny vortices → Kirchhoff's classical patch (0.06%) | No spin-2 graviton: one scalar sound branch (Bogoliubov, to 10⁻⁵) |
+| Quantised lattice → rigid rotation (Feynman) | Lorentz symmetry breaks at short scales (ω/ck = 1.61) |
+| Hamiltonian structure survives (0.55%, fixed volume) | Vortex bodies interact as 1/d³ dipoles, sign depends on spin |
+
+The κ → 0 limit lands on classical fluid mechanics, as the Jerrard–Spirn theorem predicts, not on Einstein gravity. The full write-up is in [`docs/RESEARCH-hierarchy.md`](docs/RESEARCH-hierarchy.md) §8–9.
+
 ### Current verdict (v0.1)
 
 | ✅ What a single medium reproduces | ❌ Where it fails |

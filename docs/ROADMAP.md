@@ -37,15 +37,19 @@ The app tests one hypothesis: reality is a single continuous medium, and matter 
 - [x] E10 fluid-made metrics violate Einstein vacuum equations (|R_μν| ≈ 0.8 of scale)
 - [x] E12 Bogoliubov spectrum measured to 10⁻⁵: a single scalar branch, no spin-2 mode, Lorentz violation at kξ ~ 1
 
-## Next: the unification programme (see docs/RESEARCH-hierarchy.md §6)
+## Done (v0.5): programme complete (see docs/RESEARCH-hierarchy.md §9)
+- [x] E7 point-vortex patch → Kirchhoff ellipse (0.06% at N = 1600)
+- [x] E11b vortex bodies interact as 1/d³ dipoles with orientation-dependent sign, not Newtonian gravity
+
+## Open directions (beyond simple fluids)
 Passing side (emergence):
-- E7 ħ → 0: GPE vortex patch → classical Kirchhoff ellipse
 - E9b wave-level test: sound scattering off a vortex lattice vs a smooth flow (kℓ sweep)
 - E3 fit of the (1/N)ln(d/a₀) residual
 
 Falsification side (gravity):
 - E12b Tkachenko modes of a vortex lattice (ω ∝ k² expected): still no spin-2?
-- E11b universal attraction: force law between two vortex bodies vs 1/r²
+- Media with emergent gauge symmetry (to evade Weinberg–Witten), e.g. Faddeev–Skyrme / Hopfion solitons
+- Superfluid dark-matter phenomenology (Berezhiani–Khoury galactic vortex arrays)
 
 ## Earlier backlog
 1. **Vortex reconnection** (Baggaley Type II) for filaments. Trefoil untying, as in Kleckner & Irvine.

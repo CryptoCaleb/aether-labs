@@ -42,6 +42,7 @@ impl Scorecard {
             ("Emergent relativity", "A medium's own solitons show Lorentz contraction & time dilation", sinegordon::checks),
             ("Gravity from vortices (E4 · E9 · E11)", "Hierarchical vortices keep Hamiltonian structure and a universal acoustic metric. Do they obey the equivalence principle?", gravity::checks),
             ("Einstein & graviton tests (E10 · E12)", "Does the medium's emergent geometry obey Einstein's equations, and can it carry a spin-2 graviton?", curvature::gravity_dynamics_checks),
+            ("Final programme tests (E7 · E11b)", "Does a cloud of ever-smaller vortices become classical? Do vortex bodies attract like masses?", gravity::final_checks),
             ("Vortex of vortices (scale hierarchy)", "A vortex made of ever-smaller vortices becomes one classical vortex; microstructure is invisible at large scale", hierarchy::checks),
         ];
         if self.include_slow {
